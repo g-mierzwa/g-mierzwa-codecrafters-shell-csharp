@@ -80,13 +80,12 @@ while(true)
 
                         var reader = process.StandardOutput;
                         string output = reader.ReadToEnd();
-                        Console.WriteLine(output);
+                        Console.Write(output);
 
                         process.WaitForExit();
                     }
                     
                     found = true;
-                    Console.Write("$ ");
                     break;
                 }
             }
