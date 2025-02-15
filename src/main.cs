@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 
@@ -8,6 +9,9 @@ while(true)
     Console.Write("$ ");
     var command = Console.ReadLine();
     var tokens = command.Split(' ');
+
+    var envPaths = Environment.GetEnvironmentVariable("PATH").Split(Path.PathSeparator);
+    bool found;
 
     switch (tokens[0])
     {
@@ -33,9 +37,8 @@ while(true)
                 }
                 else
                 {
-                    var paths = Environment.GetEnvironmentVariable("PATH").Split(Path.PathSeparator);
-                    bool found = false;
-                    foreach (var path in paths)
+                    found = false;
+                    foreach (var path in envPaths)
                     {
                         if (File.Exists(Path.Combine(path, tokens[1])))
                         {
@@ -56,7 +59,40 @@ while(true)
             }
             break;
         default:
-            Console.WriteLine($"{tokens[0]}: command not found");
-            break; 
+            found = false;
+            foreach (var path in envPaths)
+            {
+                if (File.Exists(Path.Combine(path, tokens[0])))
+                {
+                    var arguments = new string[tokens.Length - 1];
+                    Array.Copy(tokens, 1, arguments, 0, tokens.Length - 1);
+                    
+                    using (var process = new Process())
+                    {
+                        process.StartInfo.FileName = tokens[0];
+                        process.StartInfo.UseShellExecute = false;
+                        process.StartInfo.RedirectStandardOutput = true;
+                        for (int i = 1; i < tokens.Length; i++)
+                        {
+                            process.StartInfo.ArgumentList.Add(tokens[i]);
+                        }
+                        process.Start();
+
+                        var reader = process.StandardOutput;
+                        string output = reader.ReadToEnd();
+                        Console.WriteLine(output);
+
+                        process.WaitForExit();
+                    }
+                    
+                    found = true;
+                    break;
+                }
+            }
+            if (!found)
+            {
+                Console.WriteLine($"{tokens[0]}: command not found");
+            }
+            break;
     }
 }
