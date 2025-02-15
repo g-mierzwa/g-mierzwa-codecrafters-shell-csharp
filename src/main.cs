@@ -33,7 +33,21 @@ while(true)
                 }
                 else
                 {
-                    Console.WriteLine($"{tokens[1]}: not found");
+                    var paths = Environment.GetEnvironmentVariable("PATH").Split(Path.PathSeparator);
+                    bool found = false;
+                    foreach (var path in paths)
+                    {
+                        if (File.Exists(Path.Combine(path, tokens[1])))
+                        {
+                            Console.WriteLine($"{tokens[1]} is {Path.Combine(path, tokens[1])}");
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found)
+                    {
+                        Console.WriteLine($"{tokens[1]}: not found");
+                    }
                 }
             }
             else
