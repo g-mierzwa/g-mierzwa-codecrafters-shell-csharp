@@ -7,19 +7,23 @@ while(true)
     var command = Console.ReadLine();
     var tokens = command.Split(' ');
 
-    if (tokens[0] == "exit")
+    switch (tokens[0])
     {
-        if (int.TryParse(tokens[1], out int exitCode))
-        {
-            Environment.Exit(exitCode);
-        }
-        else
-        {
-            Console.WriteLine("Wrong argument for exit command");
-        }
-    }
-    else
-    {
-        Console.WriteLine($"{tokens[0]}: command not found");
+        case "exit":
+            if (tokens.Length == 2 && int.TryParse(tokens[1], out int exitCode))
+            {
+                Environment.Exit(exitCode);
+            }
+            else
+            {
+                Console.WriteLine("Wrong argument for exit command");
+            }
+            break;
+        case "echo":
+            Console.WriteLine(command.Length > 4 ? command.Substring(5) : "");
+            break;
+        default:
+            Console.WriteLine($"{tokens[0]}: command not found");
+            break; 
     }
 }
