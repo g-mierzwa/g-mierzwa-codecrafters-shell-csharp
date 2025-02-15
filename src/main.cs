@@ -86,6 +86,7 @@ while(true)
                     }
                     
                     found = true;
+                    Console.Write("$ ");
                     break;
                 }
             }
