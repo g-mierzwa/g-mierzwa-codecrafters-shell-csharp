@@ -2,7 +2,7 @@ using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 
-var availableCommands = new string[] {"exit", "echo", "type"};
+var availableCommands = new string[] {"exit", "echo", "type", "pwd"};
 
 while(true)
 {
@@ -57,6 +57,9 @@ while(true)
             {
                 Console.WriteLine("Wrong argument for type command");
             }
+            break;
+        case "pwd":
+            Console.WriteLine(Directory.GetCurrentDirectory());
             break;
         default:
             found = false;
