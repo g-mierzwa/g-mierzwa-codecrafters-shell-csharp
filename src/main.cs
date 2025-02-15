@@ -1,6 +1,8 @@
 using System.Net;
 using System.Net.Sockets;
 
+var availableCommands = new string[] {"exit", "echo", "type"};
+
 while(true)
 {
     Console.Write("$ ");
@@ -21,6 +23,23 @@ while(true)
             break;
         case "echo":
             Console.WriteLine(command.Length > 4 ? command.Substring(5) : "");
+            break;
+        case "type":
+            if (tokens.Length == 2)
+            {
+                if (availableCommands.Contains(tokens[1]))
+                {
+                    Console.WriteLine($"{tokens[1]} is a shell builtin");
+                }
+                else
+                {
+                    Console.WriteLine($"{tokens[1]}: not found");
+                }
+            }
+            else
+            {
+                Console.WriteLine("Wrong argument for type command");
+            }
             break;
         default:
             Console.WriteLine($"{tokens[0]}: command not found");
