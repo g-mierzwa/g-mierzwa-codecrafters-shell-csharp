@@ -2,7 +2,7 @@ using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 
-var availableCommands = new string[] {"exit", "echo", "type", "pwd"};
+var availableCommands = new string[] {"exit", "echo", "type", "pwd", "cd"};
 
 while(true)
 {
@@ -60,6 +60,20 @@ while(true)
             break;
         case "pwd":
             Console.WriteLine(Directory.GetCurrentDirectory());
+            break;
+        case "cd":
+            try
+            {
+                Directory.SetCurrentDirectory(tokens[1]);
+            }
+            catch (IndexOutOfRangeException)
+            {
+                Console.WriteLine("cd: No argument");
+            }
+            catch (DirectoryNotFoundException)
+            {
+                Console.WriteLine($"cd: {tokens[1]}: No such file or directory");
+            }
             break;
         default:
             found = false;
