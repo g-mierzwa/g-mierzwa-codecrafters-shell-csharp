@@ -21,10 +21,6 @@ namespace Src
                     Console.WriteLine($"cd: {args[1]}: No such file or directory");
                 }
             }
-            else
-            {
-                Console.WriteLine("");
-            }
         }
     }
 }

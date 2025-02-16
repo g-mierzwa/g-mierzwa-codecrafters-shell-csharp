@@ -25,9 +25,11 @@ namespace Src
                         }
                         process.Start();
 
-                        var reader = process.StandardOutput;
-                        string output = reader.ReadToEnd();
-                        Console.Write(output);
+                        using (var reader = process.StandardOutput)
+                        {
+                            string output = reader.ReadToEnd();
+                            Console.Write(output);
+                        }
 
                         process.WaitForExit();
                     }

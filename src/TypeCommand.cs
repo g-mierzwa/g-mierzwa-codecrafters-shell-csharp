@@ -29,10 +29,6 @@ namespace Src
                     }
                 }
             }
-            else
-            {
-                Console.WriteLine("");
-            }
         }
     }
 }

@@ -1,8 +1,9 @@
+using System.Text.RegularExpressions;
+
 namespace Src
 {
     public class Shell
     {
-        //private static readonly string[] AvailableCommands = ["exit", "echo", "type", "pwd", "cd"];
         public static readonly Dictionary<string, ICommand> AvailableCommands =new Dictionary<string, ICommand>
         {
             {"exit", new ExitCommand()},
@@ -18,9 +19,15 @@ namespace Src
             while (true)
             {
                 Console.Write("$ ");
-                var arguments = Console.ReadLine().Split(' ');
+                string input = Console.ReadLine();
+                //var arguments = input.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                var arguments = SeperateInput(input);
 
-                if (Shell.AvailableCommands.TryGetValue(arguments[0], out ICommand? value))
+                if (arguments.Length == 0)
+                {
+                    continue;
+                }
+                else if (Shell.AvailableCommands.TryGetValue(arguments[0], out ICommand? value))
                 {
                     value.Execute(arguments);
                 }
@@ -29,6 +36,20 @@ namespace Src
                     new ExternalCommand().Execute(arguments);
                 }
             }
+        }
+
+        private static string[] SeperateInput(string input)
+        {
+            string pattern = @"[^\s""']+|""([^""]*)""|'([^']*)'";
+            RegexOptions options = RegexOptions.Multiline;
+            var output = new List<string>();
+
+            foreach (Match m in Regex.Matches(input, pattern, options))
+            {
+                output.Add(m.Value);
+            }
+
+            return output.ToArray();
         }
     }
 }
