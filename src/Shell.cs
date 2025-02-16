@@ -40,13 +40,22 @@ namespace Src
 
         private static string[] SeperateInput(string input)
         {
-            string pattern = @"[^\s""']+|""([^""]*)""|'([^']*)'";
-            RegexOptions options = RegexOptions.Multiline;
+            //string pattern = @"[^\s""']+|""([^""]*)""|'([^']*)'";
+            string pattern = @"'(.*?)'|(\S+)";
             var output = new List<string>();
 
-            foreach (Match m in Regex.Matches(input, pattern, options))
+            foreach (Match m in Regex.Matches(input, pattern))
             {
-                output.Add(m.Value);
+                if (m.Groups[1].Success)
+                {
+                    output.Add(m.Groups[1].Value);
+                    Console.WriteLine(m.Groups[1].Value);
+                }
+                else
+                {
+                    output.Add(m.Groups[2].Value);
+                    Console.WriteLine(m.Groups[2].Value);
+                }
             }
 
             return output.ToArray();
