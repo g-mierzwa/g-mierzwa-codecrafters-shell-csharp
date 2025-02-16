@@ -40,14 +40,14 @@ namespace Src
 
         private static string[] SeperateInput(string input)
         {
-            string pattern = @"'(.*?)'|(\S+)";
+            string pattern = @"'((?:[^']*')*[^']*)'|(\S+)";
             var output = new List<string>();
 
             foreach (Match m in Regex.Matches(input, pattern))
             {
                 if (m.Groups[1].Success)
                 {
-                    output.Add(m.Groups[1].Value);
+                    output.Add(m.Groups[1].Value.Replace("'", ""));
                 }
                 else
                 {
