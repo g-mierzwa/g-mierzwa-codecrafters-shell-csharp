@@ -20,7 +20,6 @@ namespace Src
             {
                 Console.Write("$ ");
                 string input = Console.ReadLine();
-                //var arguments = input.Split(' ', StringSplitOptions.RemoveEmptyEntries);
                 var arguments = SeperateInput(input);
 
                 if (arguments.Length == 0)
@@ -40,14 +39,16 @@ namespace Src
 
         private static string[] SeperateInput(string input)
         {
-            string pattern = @"'((?:[^']*')*[^']*)'|(\S+)";
+            string pattern = @"'(.*?)'|(\S+)";
             var output = new List<string>();
+
+            input = input.Replace("''", "");
 
             foreach (Match m in Regex.Matches(input, pattern))
             {
                 if (m.Groups[1].Success)
                 {
-                    output.Add(m.Groups[1].Value.Replace("'", ""));
+                    output.Add(m.Groups[1].Value);
                 }
                 else
                 {
