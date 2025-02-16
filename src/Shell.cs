@@ -40,7 +40,6 @@ namespace Src
 
         private static string[] SeperateInput(string input)
         {
-            //string pattern = @"[^\s""']+|""([^""]*)""|'([^']*)'";
             string pattern = @"'(.*?)'|(\S+)";
             var output = new List<string>();
 
