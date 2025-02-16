@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime.InteropServices;
 
 var availableCommands = new string[] {"exit", "echo", "type", "pwd", "cd"};
 
@@ -64,7 +65,11 @@ while(true)
         case "cd":
             try
             {
-                Directory.SetCurrentDirectory(tokens[1]);
+                string? homeDir = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? 
+                                Environment.GetEnvironmentVariable("USERPROFILE") :
+                                Environment.GetEnvironmentVariable("HOME");
+                string pathToGo = tokens[1].Replace("~", homeDir);
+                Directory.SetCurrentDirectory(pathToGo);
             }
             catch (IndexOutOfRangeException)
             {
