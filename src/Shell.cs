@@ -55,10 +55,11 @@ public class Shell
             switch (input[currentPosition])
             {
                 case ' ':
-                    currentToken += input.Substring(0, currentPosition);
+                    string textToAdd = input.Substring(0, currentPosition);
+                    textToAdd = textToAdd.Replace("\\", "");
+                    currentToken += textToAdd;
                     input = input.Substring(currentPosition + 1).TrimStart();
                     output.Add(currentToken);
-
                     currentToken = "";
                     break;
                 case '\'':
@@ -79,7 +80,6 @@ public class Shell
         }
         currentToken += input;
         output.Add(currentToken);
-
         return output.ToArray();
     }
 }
