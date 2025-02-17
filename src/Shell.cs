@@ -20,7 +20,7 @@ public class Shell
         {
             Console.Write("$ ");
             string input = Console.ReadLine();
-            var arguments = SeperateInput(input);
+            var arguments = ParseInput(input);
 
             if (arguments.Length == 0)
             {
@@ -37,29 +37,48 @@ public class Shell
         }
     }
 
-    private static string[] SeperateInput(string input)
+    private static string[] ParseInput(string input)
     {
-        string pattern = @"[^\s""']+|""([^""]*)""|'([^']*)'";;
         var output = new List<string>();
+        string currentToken = "";
+        int currentPosition = 0;
 
-        input = input.Replace("''", "");
-        input = input.Replace("\"\"", "");
-
-        foreach (Match m in Regex.Matches(input, pattern))
+        while (currentPosition >= 0)
         {
-            if (m.Groups[1].Success)
+            currentPosition = input.IndexOfAny([' ', '"', '\'']);
+
+            if (currentPosition < 0)
             {
-                output.Add(m.Groups[1].Value);
+                continue;
             }
-            else if (m.Groups[2].Success)
+
+            switch (input[currentPosition])
             {
-                output.Add(m.Groups[2].Value);
-            }
-            else
-            {
-                output.Add(m.Groups[0].Value);
+                case ' ':
+                    currentToken += input.Substring(0, currentPosition);
+                    input = input.Substring(currentPosition + 1).TrimStart();
+                    output.Add(currentToken);
+
+                    currentToken = "";
+                    break;
+                case '\'':
+                    currentToken += input.Substring(0, currentPosition);
+                    input = input.Substring(currentPosition + 1);
+                    currentPosition = input.IndexOf('\'');
+                    currentToken += input.Substring(0, currentPosition);
+                    input = input.Substring(currentPosition + 1);
+                    break;
+                case '"':
+                    currentToken += input.Substring(0, currentPosition);
+                    input = input.Substring(currentPosition + 1);
+                    currentPosition = input.IndexOf('"');
+                    currentToken += input.Substring(0, currentPosition);
+                    input = input.Substring(currentPosition + 1);
+                    break;
             }
         }
+        currentToken += input;
+        output.Add(currentToken);
 
         return output.ToArray();
     }
