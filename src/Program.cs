@@ -1,10 +1,8 @@
-namespace Src
+namespace Src;
+public class Program
 {
-    public class Program
+    public static void Main(string[] args)
     {
-        public static void Main(string[] args)
-        {
-            new Shell().Run();
-        }
+        new Shell().Run();
     }
 }

@@ -1,7 +1,6 @@
-namespace Src
+namespace Src;
+
+public interface ICommand
 {
-    public interface ICommand
-    {
-        public void Execute(string[] args);
-    }
+    public void Execute(string[] args);
 }

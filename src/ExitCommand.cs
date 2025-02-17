@@ -1,17 +1,16 @@
-namespace Src
+namespace Src;
+
+public class ExitCommand : ICommand
 {
-    public class ExitCommand : ICommand
+    public void Execute(string[] args)
     {
-        public void Execute(string[] args)
+        if (args.Length > 1 && !string.IsNullOrEmpty(args[1]) && int.TryParse(args[1], out int exitCode))
         {
-            if (args.Length > 1 && !string.IsNullOrEmpty(args[1]) && int.TryParse(args[1], out int exitCode))
-            {
-                Environment.Exit(exitCode);
-            }
-            else
-            {
-                Environment.Exit(0);
-            }
+            Environment.Exit(exitCode);
+        }
+        else
+        {
+            Environment.Exit(0);
         }
     }
 }

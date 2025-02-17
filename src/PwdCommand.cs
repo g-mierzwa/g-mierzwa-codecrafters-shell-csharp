@@ -1,10 +1,9 @@
-namespace Src
+namespace Src;
+
+public class PwdCommand : ICommand
 {
-    public class PwdCommand : ICommand
+    public void Execute(string[] args)
     {
-        public void Execute(string[] args)
-        {
-            Console.WriteLine(Directory.GetCurrentDirectory());
-        }
+        Console.WriteLine(Directory.GetCurrentDirectory());
     }
 }
