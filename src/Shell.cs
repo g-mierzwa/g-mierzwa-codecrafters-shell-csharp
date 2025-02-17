@@ -43,6 +43,7 @@ public class Shell
         var output = new List<string>();
 
         input = input.Replace("''", "");
+        input = input.Replace("\"\"", "");
 
         foreach (Match m in Regex.Matches(input, pattern))
         {
