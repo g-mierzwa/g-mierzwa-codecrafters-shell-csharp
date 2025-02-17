@@ -39,7 +39,7 @@ public class Shell
 
     private static string[] SeperateInput(string input)
     {
-        string pattern = @"'(.*?)'|(\S+)";
+        string pattern = @"[^\s""']+|""([^""]*)""|'([^']*)'";;
         var output = new List<string>();
 
         input = input.Replace("''", "");
@@ -50,9 +50,13 @@ public class Shell
             {
                 output.Add(m.Groups[1].Value);
             }
-            else
+            else if (m.Groups[2].Success)
             {
                 output.Add(m.Groups[2].Value);
+            }
+            else
+            {
+                output.Add(m.Groups[0].Value);
             }
         }
 
