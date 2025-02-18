@@ -84,8 +84,11 @@ public class Shell
                 case ' ':
                     if (!isInsideSingleQuotes && !isInsideDoubleQuotes && currentToken.Length > 0)
                     {
-                        output.Add(currentToken);
-                        currentToken = "";
+                        if (i + 1 >= input.Length || input[i + 1] != ' ')
+                        {
+                            output.Add(currentToken);
+                            currentToken = "";
+                        }
                     }
                     else
                     {
