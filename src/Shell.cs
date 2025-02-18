@@ -53,11 +53,17 @@ public class Shell
             {
                 case '\'':
                     isInsideSingleQuotes = !isInsideSingleQuotes;
-                    currentToken += currentCharacter;
+                    if (isInsideDoubleQuotes)
+                    {
+                        currentToken += currentCharacter;
+                    }
                     break;
                 case '"':
                     isInsideDoubleQuotes = !isInsideDoubleQuotes;
-                    currentToken += currentCharacter;
+                    if (isInsideSingleQuotes)
+                    {
+                        currentToken += currentCharacter;
+                    }
                     break;
                 case '\\':
                     if (i + 1 < input.Length)
@@ -95,6 +101,6 @@ public class Shell
         {
             output.Add(currentToken);
         }
-        return output.Select(s => s.Trim('\'', '"')).ToArray();
+        return output.ToArray();
     }
 }
