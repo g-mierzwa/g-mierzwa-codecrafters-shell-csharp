@@ -52,17 +52,23 @@ public class Shell
             switch (currentCharacter)
             {
                 case '\'':
-                    isInsideSingleQuotes = !isInsideSingleQuotes;
                     if (isInsideDoubleQuotes)
                     {
                         currentToken += currentCharacter;
                     }
+                    else
+                    {
+                        isInsideSingleQuotes = !isInsideSingleQuotes;
+                    }
                     break;
                 case '"':
-                    isInsideDoubleQuotes = !isInsideDoubleQuotes;
                     if (isInsideSingleQuotes)
                     {
                         currentToken += currentCharacter;
+                    }
+                    else
+                    {
+                        isInsideDoubleQuotes = !isInsideDoubleQuotes;
                     }
                     break;
                 case '\\':
