@@ -37,7 +37,7 @@ public class Shell
         }
     }
 
-    private static string[] ParseInput(string input)
+    /* private static string[] ParseInput(string input)
     {
         var output = new List<string>();
         string currentToken = "";
@@ -60,6 +60,7 @@ public class Shell
                     currentToken += textToAdd;
                     input = input.Substring(currentPosition + 1).TrimStart();
                     output.Add(currentToken);
+Console.WriteLine(currentToken);
                     currentToken = "";
                     break;
                 case '\'':
@@ -80,6 +81,71 @@ public class Shell
         }
         currentToken += input;
         output.Add(currentToken);
+Console.WriteLine(currentToken);
         return output.ToArray();
+    } */
+
+    private static string[] ParseInput(string input)
+    {
+        var output = new List<string>();
+        string currentToken = "";
+        bool isInsideSingleQuotes = false;
+        bool isInsideDoubleQuotes = false;
+
+        for (int i = 0; i < input.Length; i++)
+        {
+            char currentCharacter = input[i];
+            char[] specialCharacters = ['\\', '$', '"', '\n'];
+
+            switch (currentCharacter)
+            {
+                case '\'':
+                    isInsideSingleQuotes = !isInsideSingleQuotes;
+                    currentToken += currentCharacter;
+                    break;
+                case '"':
+                    isInsideDoubleQuotes = !isInsideDoubleQuotes;
+                    currentToken += currentCharacter;
+                    break;
+                case '\\':
+                    if (i + 1 < input.Length)
+                    {
+                        char nextCharacter = input[i + 1];
+                        if ((!isInsideSingleQuotes && !isInsideDoubleQuotes) ||
+                            (isInsideDoubleQuotes && specialCharacters.Contains(nextCharacter)))
+                        {
+                            currentToken += nextCharacter;
+                            i++;
+                        }
+                        else
+                        {
+                            currentToken += currentCharacter;
+                        }
+                    }
+                    break;
+                case ' ':
+                    if (!isInsideSingleQuotes && !isInsideDoubleQuotes && currentToken.Length > 0)
+                    {
+                        output.Add(currentToken);
+                        currentToken = "";
+                    }
+                    else
+                    {
+                        currentToken += currentCharacter;
+                    }
+                    break;
+                default:
+                    currentToken += currentCharacter;
+                    break;
+            }
+        }
+        if (currentToken.Length > 0)
+        {
+            output.Add(currentToken);
+        }
+        output = output.Select(s => s.Trim('\'', '"')).ToList();
+        foreach (string s in output) Console.WriteLine(s);
+        return output.ToArray();
+        //return output.Select(s => s.Trim('\'', '"')).ToArray();
     }
 }
