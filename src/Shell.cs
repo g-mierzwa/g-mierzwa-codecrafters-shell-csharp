@@ -37,54 +37,6 @@ public class Shell
         }
     }
 
-    /* private static string[] ParseInput(string input)
-    {
-        var output = new List<string>();
-        string currentToken = "";
-        int currentPosition = 0;
-
-        while (currentPosition >= 0)
-        {
-            currentPosition = input.IndexOfAny([' ', '"', '\'']);
-
-            if (currentPosition < 0)
-            {
-                continue;
-            }
-
-            switch (input[currentPosition])
-            {
-                case ' ':
-                    string textToAdd = input.Substring(0, currentPosition);
-                    textToAdd = textToAdd.Replace("\\", "");
-                    currentToken += textToAdd;
-                    input = input.Substring(currentPosition + 1).TrimStart();
-                    output.Add(currentToken);
-Console.WriteLine(currentToken);
-                    currentToken = "";
-                    break;
-                case '\'':
-                    currentToken += input.Substring(0, currentPosition);
-                    input = input.Substring(currentPosition + 1);
-                    currentPosition = input.IndexOf('\'');
-                    currentToken += input.Substring(0, currentPosition);
-                    input = input.Substring(currentPosition + 1);
-                    break;
-                case '"':
-                    currentToken += input.Substring(0, currentPosition);
-                    input = input.Substring(currentPosition + 1);
-                    currentPosition = input.IndexOf('"');
-                    currentToken += input.Substring(0, currentPosition);
-                    input = input.Substring(currentPosition + 1);
-                    break;
-            }
-        }
-        currentToken += input;
-        output.Add(currentToken);
-Console.WriteLine(currentToken);
-        return output.ToArray();
-    } */
-
     private static string[] ParseInput(string input)
     {
         var output = new List<string>();
@@ -143,9 +95,6 @@ Console.WriteLine(currentToken);
         {
             output.Add(currentToken);
         }
-        output = output.Select(s => s.Trim('\'', '"')).ToList();
-        foreach (string s in output) Console.WriteLine(s);
-        return output.ToArray();
-        //return output.Select(s => s.Trim('\'', '"')).ToArray();
+        return output.Select(s => s.Trim('\'', '"')).ToArray();
     }
 }
