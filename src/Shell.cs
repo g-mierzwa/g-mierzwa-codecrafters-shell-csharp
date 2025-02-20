@@ -161,6 +161,8 @@ public class Shell
             writer.Close();
             var stdOut = new StreamWriter(Console.OpenStandardOutput()) { AutoFlush = true };
             Console.SetOut(stdOut);
+            var stdError = new StreamWriter(Console.OpenStandardError()) { AutoFlush = true };
+            Console.SetError(stdError);
             isOutputRedirected = false;
         }
     }

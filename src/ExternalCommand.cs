@@ -30,7 +30,7 @@ public class ExternalCommand : ICommand
                     string error = process.StandardError.ReadToEnd();
 
                     Console.Write(output);
-                    Console.Write(error);
+                    Console.Error.Write(error);
 
                     process.WaitForExit();
                 }
