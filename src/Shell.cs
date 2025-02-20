@@ -13,7 +13,8 @@ public class Shell
         {"cd", new CdCommand()},
     };
     public static readonly string[] EnvPaths = Environment.GetEnvironmentVariable("PATH").Split(Path.PathSeparator);
-
+    private static StreamWriter? writer = null;
+    private static bool isOutputRedirected = false;
     public void Run()
     {
         while (true)
@@ -21,6 +22,7 @@ public class Shell
             Console.Write("$ ");
             string input = Console.ReadLine();
             var arguments = ParseInput(input);
+            SetOutput(ref arguments, ref writer);
 
             if (arguments.Length == 0)
             {
@@ -34,6 +36,8 @@ public class Shell
             {
                 new ExternalCommand().Execute(arguments);
             }
+
+            RestoreDefaultOutput(ref writer);
         }
     }
 
@@ -111,5 +115,37 @@ public class Shell
             output.Add(currentToken);
         }
         return output.ToArray();
+    }
+
+    public static void SetOutput(ref string[] args, ref StreamWriter? writer)
+    {
+        int i = Array.IndexOf(args, "1>");
+        if (i < 0)
+        {
+            i = Array.IndexOf(args, ">");
+        }
+        if (i > 0 && args.Length > i + 1)
+        {
+            string path = Path.Combine(Directory.GetCurrentDirectory(), args[i + 1]);
+            if (!File.Exists(path))
+            {
+                File.Create(path).Close();
+            }
+            writer = new StreamWriter(path) { AutoFlush = true };
+            Console.SetOut(writer);
+            isOutputRedirected = true;
+            args = args.Skip(0).Take(i).ToArray();
+        }
+    }
+
+    public static void RestoreDefaultOutput(ref StreamWriter? writer)
+    {
+        if (isOutputRedirected)
+        {
+            writer.Close();
+            var stdOut = new StreamWriter(Console.OpenStandardOutput()) { AutoFlush = true };
+            Console.SetOut(stdOut);
+            isOutputRedirected = false;
+        }
     }
 }
