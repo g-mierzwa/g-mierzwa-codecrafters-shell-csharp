@@ -19,17 +19,18 @@ public class ExternalCommand : ICommand
                     process.StartInfo.FileName = args[0];
                     process.StartInfo.UseShellExecute = false;
                     process.StartInfo.RedirectStandardOutput = true;
+                    process.StartInfo.RedirectStandardError = true;
                     foreach (var argument in arguments)
                     {
                         process.StartInfo.ArgumentList.Add(argument);
                     }
                     process.Start();
 
-                    using (var reader = process.StandardOutput)
-                    {
-                        string output = reader.ReadToEnd();
-                        Console.Write(output);
-                    }
+                    string output = process.StandardOutput.ReadToEnd();
+                    string error = process.StandardError.ReadToEnd();
+
+                    Console.Write(output);
+                    Console.Write(error);
 
                     process.WaitForExit();
                 }
