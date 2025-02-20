@@ -120,9 +120,18 @@ public class Shell
     public static void SetOutput(ref string[] args, ref StreamWriter? writer)
     {
         int i = Array.IndexOf(args, "1>");
+        bool errorRedirection = false;
         if (i < 0)
         {
             i = Array.IndexOf(args, ">");
+        }
+        if (i < 0)
+        {
+            i = Array.IndexOf(args, "2>");
+            if (i > 0)
+            {
+                errorRedirection = true;
+            }
         }
         if (i > 0 && args.Length > i + 1)
         {
@@ -132,7 +141,14 @@ public class Shell
                 File.Create(path).Close();
             }
             writer = new StreamWriter(path) { AutoFlush = true };
-            Console.SetOut(writer);
+            if (errorRedirection)
+            {
+                Console.SetError(writer);
+            }
+            else
+            {
+                Console.SetOut(writer);
+            }
             isOutputRedirected = true;
             args = args.Skip(0).Take(i).ToArray();
         }

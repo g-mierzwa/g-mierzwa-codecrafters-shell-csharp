@@ -1,4 +1,0 @@
-echo
-aaa
-ccc
-aaa ccc
