@@ -145,7 +145,7 @@ public class Shell
         {
             redirectOperatorIndex = Array.IndexOf(args, "2>>");
             errorRedirection = true;
-            append = false;
+            append = true;
         }
 
         if (redirectOperatorIndex > 0 && args.Length > redirectOperatorIndex + 1)
