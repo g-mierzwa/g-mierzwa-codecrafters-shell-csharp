@@ -119,28 +119,45 @@ public class Shell
 
     public static void SetOutput(ref string[] args, ref StreamWriter? writer)
     {
-        int i = Array.IndexOf(args, "1>");
+        int redirectOperatorIndex = -1;
         bool errorRedirection = false;
-        if (i < 0)
+        bool append = false;
+        
+        if (args.Contains(">") || args.Contains("1>"))
         {
-            i = Array.IndexOf(args, ">");
+            redirectOperatorIndex = Array.IndexOf(args, ">") >= 0 ? Array.IndexOf(args, ">") : Array.IndexOf(args, "1>");
+            errorRedirection = false;
+            append = false;
         }
-        if (i < 0)
+        else if (args.Contains("2>"))
         {
-            i = Array.IndexOf(args, "2>");
-            if (i > 0)
-            {
-                errorRedirection = true;
-            }
+            redirectOperatorIndex = Array.IndexOf(args, "2>");
+            errorRedirection = true;
+            append = false;
         }
-        if (i > 0 && args.Length > i + 1)
+        else if (args.Contains(">>") || args.Contains("1>>"))
         {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), args[i + 1]);
+            redirectOperatorIndex = Array.IndexOf(args, ">>") >= 0 ? Array.IndexOf(args, ">>") : Array.IndexOf(args, "1>>");
+            errorRedirection = false;
+            append = true;
+        }
+        else if (args.Contains("2>>"))
+        {
+            redirectOperatorIndex = Array.IndexOf(args, "2>>");
+            errorRedirection = true;
+            append = false;
+        }
+
+        if (redirectOperatorIndex > 0 && args.Length > redirectOperatorIndex + 1)
+        {
+            string path = Path.Combine(Directory.GetCurrentDirectory(), args[redirectOperatorIndex + 1]);
             if (!File.Exists(path))
             {
                 File.Create(path).Close();
             }
-            writer = new StreamWriter(path) { AutoFlush = true };
+            writer = append ? new StreamWriter(path, true) : new StreamWriter(path);
+            writer.AutoFlush = true;
+
             if (errorRedirection)
             {
                 Console.SetError(writer);
@@ -150,7 +167,7 @@ public class Shell
                 Console.SetOut(writer);
             }
             isOutputRedirected = true;
-            args = args.Skip(0).Take(i).ToArray();
+            args = args.Skip(0).Take(redirectOperatorIndex).ToArray();
         }
     }
 
