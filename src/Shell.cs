@@ -21,7 +21,6 @@ public class Shell
         while (true)
         {
             Console.Write("$ ");
-            //string input = Console.ReadLine();
             string input = ReadUserInput();
             var arguments = ParseInput(input);
             SetOutput(ref arguments, ref writer);
@@ -188,21 +187,6 @@ public class Shell
 
     public static string ReadUserInput()
     {
-        // string input = "";
-        // ConsoleKeyInfo nextKey;
-        
-        // while((nextKey = Console.ReadKey(true)).Key != ConsoleKey.Enter)
-        // {
-        //     if (nextKey.Key == ConsoleKey.Tab)
-        //     {
-        //         Console.WriteLine("[TAB PRESSED]");
-        //     }
-        //     Console.Write(nextKey.KeyChar);
-        //     input += nextKey.KeyChar;
-        // }
-        // Console.WriteLine();
-        // return input;
-
         var input = new StringBuilder();
         var userInputThread = new Thread(() =>
         {
