@@ -250,6 +250,7 @@ public class Shell
         }
         else
         {
+            Console.Write("\a");
             return null;
         }
     }
