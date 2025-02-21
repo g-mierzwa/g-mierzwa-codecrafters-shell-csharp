@@ -1,3 +1,4 @@
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Src;
@@ -20,7 +21,8 @@ public class Shell
         while (true)
         {
             Console.Write("$ ");
-            string input = Console.ReadLine();
+            //string input = Console.ReadLine();
+            string input = ReadUserInput();
             var arguments = ParseInput(input);
             SetOutput(ref arguments, ref writer);
 
@@ -181,6 +183,90 @@ public class Shell
             var stdError = new StreamWriter(Console.OpenStandardError()) { AutoFlush = true };
             Console.SetError(stdError);
             isOutputRedirected = false;
+        }
+    }
+
+    public static string ReadUserInput()
+    {
+        // string input = "";
+        // ConsoleKeyInfo nextKey;
+        
+        // while((nextKey = Console.ReadKey(true)).Key != ConsoleKey.Enter)
+        // {
+        //     if (nextKey.Key == ConsoleKey.Tab)
+        //     {
+        //         Console.WriteLine("[TAB PRESSED]");
+        //     }
+        //     Console.Write(nextKey.KeyChar);
+        //     input += nextKey.KeyChar;
+        // }
+        // Console.WriteLine();
+        // return input;
+
+        var input = new StringBuilder();
+        var userInputThread = new Thread(() =>
+        {
+            while (true)
+            {
+                var nextKey = Console.ReadKey(true);
+
+                if (nextKey.Key == ConsoleKey.Tab)
+                {
+                    string? autocompleted = AutocompleteBultin(input.ToString());
+                    if (!string.IsNullOrEmpty(autocompleted))
+                    {
+                        Console.Clear();                                            //TODO Clear single line instead
+                        Console.Write($"$ {autocompleted} ");
+                        input.Clear();
+                        input.Append($"{autocompleted} ");
+                    }
+                }
+                else if (nextKey.Key == ConsoleKey.Enter)
+                {
+                    Console.WriteLine();
+                    break;
+                }
+                else if (nextKey.Key == ConsoleKey.Backspace && input.Length > 0)
+                {
+                    input.Remove(input.Length - 1, 1);
+                    Console.Clear();                                            //TODO Clear single line instead
+                    Console.Write($"$ {input.ToString()}");
+                }
+                else
+                {
+                    input.Append(nextKey.KeyChar);
+                    Console.Write(nextKey.KeyChar);
+                }
+            }
+        });
+
+        userInputThread.Start();
+        userInputThread.Join();
+
+        return input.ToString();
+    }
+
+    public static string? AutocompleteBultin(string input)
+    {
+        int count = 0;
+        string? foundBuiltin = null;
+
+        foreach (string builtin in AvailableCommands.Keys)
+        {
+            if (builtin.StartsWith(input))
+            {
+                foundBuiltin = builtin;
+                count++;
+            }
+        }
+
+        if (count == 1)
+        {
+            return foundBuiltin;
+        }
+        else
+        {
+            return null;
         }
     }
 }
