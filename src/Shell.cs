@@ -293,6 +293,7 @@ public class Shell
             else
             {
                 full = false;
+                Console.Write("\a");
                 return commonPrefix;
             }
         }
