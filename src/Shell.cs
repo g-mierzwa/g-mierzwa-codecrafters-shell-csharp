@@ -1,3 +1,4 @@
+using System.Net.NetworkInformation;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -197,19 +198,24 @@ public class Shell
 
                 if (nextKey.Key == ConsoleKey.Tab && !pressedTab)
                 {
-                    string? autocompleted = AutocompleteCommand(input.ToString());
+                    string? autocompleted = AutocompleteCommand(input.ToString(), out bool full);
                     if (!string.IsNullOrEmpty(autocompleted))
                     {
                         Console.Clear();                                            //TODO Clear single line instead
-                        Console.Write($"$ {autocompleted} ");
                         input.Clear();
-                        input.Append($"{autocompleted} ");
+                        Console.Write($"$ {autocompleted}");
+                        input.Append($"{autocompleted}");
+                        if (full)
+                        {
+                            Console.Write(' ');
+                            input.Append(' ');
+                        }
                     }
                     pressedTab = true;
                 }
                 else if(nextKey.Key == ConsoleKey.Tab && pressedTab)
                 {
-                    string? autocompleted = AutocompleteCommand(input.ToString(), true);
+                    string? autocompleted = AutocompleteCommand(input.ToString(), out bool full, true);
                     pressedTab = false;
                 }
                 else if (nextKey.Key == ConsoleKey.Enter)
@@ -239,7 +245,7 @@ public class Shell
         return input.ToString();
     }
 
-    public static string? AutocompleteCommand(string input, bool printList = false)
+    public static string? AutocompleteCommand(string input, out bool full, bool printList = false)
     {
         List<string> autocompletableCommands = new();
         List<string> foundCommands = new();
@@ -272,12 +278,23 @@ public class Shell
 
         if (foundCommands.Count == 1)
         {
+            full = true;
             return foundCommands[0];
         }
         else if (!printList)
         {
-            Console.Write("\a");
-            return null;
+            string commonPrefix = LongestCommonPrefix(foundCommands.ToArray());
+            if (string.IsNullOrEmpty(commonPrefix))
+            {
+                Console.Write("\a");
+                full = false;
+                return null;
+            }
+            else
+            {
+                full = false;
+                return commonPrefix;
+            }
         }
         else
         {
@@ -288,7 +305,30 @@ public class Shell
             }
             Console.WriteLine();
             Console.Write($"$ {input}");
+            full = false;
             return null;
         }
+    }
+
+    public static string LongestCommonPrefix(string[] input)
+    {
+        if (input.Length == 0)
+        {
+            return "";
+        }
+        string prefix = "";
+        for (int i = 0; i < input[0].Length; i++)
+        {
+            char c = input[0][i];
+            for (int j = 1; j < input.Length; j++)
+            {
+                if (i >= input[j].Length || input[j][i] != c)
+                {
+                    return prefix;
+                }
+            }
+            prefix += c;
+        }
+        return prefix;
     }
 }
