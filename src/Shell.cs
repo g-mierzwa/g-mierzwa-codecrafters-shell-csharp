@@ -287,7 +287,7 @@ public class Shell
                 Console.Write($"{command}  ");
             }
             Console.WriteLine();
-            Console.Write("$ ");
+            Console.Write($"$ {input} ");
             return null;
         }
     }
