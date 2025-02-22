@@ -190,11 +190,12 @@ public class Shell
         var input = new StringBuilder();
         var userInputThread = new Thread(() =>
         {
+            bool pressedTab = false;
             while (true)
             {
                 var nextKey = Console.ReadKey(true);
 
-                if (nextKey.Key == ConsoleKey.Tab)
+                if (nextKey.Key == ConsoleKey.Tab && !pressedTab)
                 {
                     string? autocompleted = AutocompleteCommand(input.ToString());
                     if (!string.IsNullOrEmpty(autocompleted))
@@ -204,6 +205,12 @@ public class Shell
                         input.Clear();
                         input.Append($"{autocompleted} ");
                     }
+                    pressedTab = true;
+                }
+                else if(nextKey.Key == ConsoleKey.Tab && pressedTab)
+                {
+                    string? autocompleted = AutocompleteCommand(input.ToString(), true);
+                    pressedTab = false;
                 }
                 else if (nextKey.Key == ConsoleKey.Enter)
                 {
@@ -215,11 +222,13 @@ public class Shell
                     input.Remove(input.Length - 1, 1);
                     Console.Clear();                                            //TODO Clear single line instead
                     Console.Write($"$ {input.ToString()}");
+                    pressedTab = false;
                 }
                 else
                 {
                     input.Append(nextKey.KeyChar);
                     Console.Write(nextKey.KeyChar);
+                    pressedTab = false;
                 }
             }
         });
@@ -230,11 +239,10 @@ public class Shell
         return input.ToString();
     }
 
-    public static string? AutocompleteCommand(string input)
+    public static string? AutocompleteCommand(string input, bool printList = false)
     {
-        int count = 0;
-        string? foundCommand = null;
         List<string> autocompletableCommands = new();
+        List<string> foundCommands = new();
         
         foreach (var builtin in AvailableCommands.Keys)
         {
@@ -257,18 +265,28 @@ public class Shell
         {
             if (command.StartsWith(input))
             {
-                foundCommand = command;
-                count++;
+                foundCommands.Add(command);
             }
         }
 
-        if (count == 1)
+        if (foundCommands.Count == 1)
         {
-            return foundCommand;
+            return foundCommands[0];
+        }
+        else if (!printList)
+        {
+            Console.Write("\a");
+            return null;
         }
         else
         {
-            Console.Write("\a");
+            Console.WriteLine();
+            foreach (var command in foundCommands)
+            {
+                Console.Write($"{command}  ");
+            }
+            Console.WriteLine();
+            Console.Write("$ ");
             return null;
         }
     }
