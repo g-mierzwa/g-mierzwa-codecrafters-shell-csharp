@@ -251,6 +251,7 @@ public class Shell
                 }
             }
         }
+        autocompletableCommands = autocompletableCommands.Distinct().ToList();
 
         foreach (var command in autocompletableCommands)
         {
