@@ -196,7 +196,7 @@ public class Shell
 
                 if (nextKey.Key == ConsoleKey.Tab)
                 {
-                    string? autocompleted = AutocompleteBultin(input.ToString());
+                    string? autocompleted = AutocompleteCommand(input.ToString());
                     if (!string.IsNullOrEmpty(autocompleted))
                     {
                         Console.Clear();                                            //TODO Clear single line instead
@@ -230,23 +230,40 @@ public class Shell
         return input.ToString();
     }
 
-    public static string? AutocompleteBultin(string input)
+    public static string? AutocompleteCommand(string input)
     {
         int count = 0;
-        string? foundBuiltin = null;
-
-        foreach (string builtin in AvailableCommands.Keys)
+        string? foundCommand = null;
+        List<string> autocompletableCommands = new();
+        
+        foreach (var builtin in AvailableCommands.Keys)
         {
-            if (builtin.StartsWith(input))
+            autocompletableCommands.Add(builtin);
+        }
+
+        foreach (var path in EnvPaths)
+        {
+            if (Directory.Exists(path))
             {
-                foundBuiltin = builtin;
+                foreach (var file in Directory.GetFiles(path))
+                {
+                    autocompletableCommands.Add(Path.GetFileName(file));
+                }
+            }
+        }
+
+        foreach (var command in autocompletableCommands)
+        {
+            if (command.StartsWith(input))
+            {
+                foundCommand = command;
                 count++;
             }
         }
 
         if (count == 1)
         {
-            return foundBuiltin;
+            return foundCommand;
         }
         else
         {
