@@ -260,6 +260,7 @@ public class Shell
             }
         }
         autocompletableCommands = autocompletableCommands.Distinct().ToList();
+        autocompletableCommands.Sort();
 
         foreach (var command in autocompletableCommands)
         {
